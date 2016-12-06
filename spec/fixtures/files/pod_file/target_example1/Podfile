@@ -11,7 +11,7 @@ target :default do
 end
 
 target :lite do
-    link_with 'app-lite'
+    inherit! :search_paths
 
     pod 'TestFlightSDK', '>= 1.1'
     pod 'MBProgressHUD', '0.5'
@@ -23,7 +23,6 @@ target :lite do
 end
 
 target :demo do
-    link_with 'app-demo'
 
     pod 'TestFlightSDK', '>= 1.1'
     pod 'MBProgressHUD', '0.5'
