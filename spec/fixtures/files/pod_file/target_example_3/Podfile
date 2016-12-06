@@ -4,6 +4,7 @@ target :debug do
     pod 'CocoaLumberjack'
 end
 
-target :test, :exclusive => true do
+target :test do
+    inherit! :search_paths
     pod 'Kiwi'
 end
