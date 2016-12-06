@@ -1,9 +1,7 @@
 platform :osx, '10.8'
 
-link_with ['Sail', 'Sail-Tests']
-
 pod 'SSKeychain', '~> 0.1.4'
-pod 'INAppStoreWindow', :head
+pod 'INAppStoreWindow', git: 'https://github.com/indragiek/INAppStoreWindow.git'
 pod 'AFNetworking', '1.1.0'
 pod 'Reachability', '~> 3.1.0'
 pod 'KSADNTwitterFormatter', '~> 0.1.0'
