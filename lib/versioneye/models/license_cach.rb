@@ -35,6 +35,7 @@ class LicenseCach < Versioneye::Model
 
   def is_whitelisted?
     return nil if on_whitelist.nil? && on_cwl.nil?
+
     on_whitelist == true || on_cwl == true
   end
 

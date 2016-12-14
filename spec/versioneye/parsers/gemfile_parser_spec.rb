@@ -1,6 +1,26 @@
 require 'spec_helper'
 
 describe GemfileParser do
+  
+  describe "helper functions" do
+    let(:parser){ GemfilelockParser.new }
+
+    describe "strip_platform_quotes" do
+      it "returns non-matching strings untouched" do
+        expect( parser.strip_platform_exts('1.0.0')   ).to eq('1.0.0')
+        expect( parser.strip_platform_exts('1.0-abc') ).to eq('1.0-abc')
+        expect( parser.strip_platform_exts('1.0-a-b') ).to eq('1.0-a-b')
+      end
+
+      it "filters out known platform extensions" do
+        expect( parser.strip_platform_exts('1.0-x64')       ).to eq('1.0')
+        expect( parser.strip_platform_exts('1.0-a-x86')     ).to eq('1.0-a')
+        expect( parser.strip_platform_exts('1.0-java')      ).to eq('1.0')
+        expect( parser.strip_platform_exts('1.0-java-b-c')  ).to eq('1.0-b-c')
+        expect( parser.strip_platform_exts('1.0-mingw32')   ).to eq('1.0')
+      end
+    end
+  end
 
   describe "parse" do
 
@@ -176,9 +196,65 @@ describe GemfileParser do
       dep_16.version_requested.should eql("3.3.3")
       dep_16.version_current.should eql("3.3.3")
       dep_16.comperator.should eql("=")
-
     end
-
   end
 
+
+  describe "fixes for issues" do
+    let(:parser){ GemfileParser.new }
+
+    let(:product1){
+      FactoryGirl.create(
+        :product_with_versions,
+        prod_key: 'actioncable',
+        name: 'actioncable',
+        prod_type: Project::A_TYPE_RUBYGEMS,
+        language: Product::A_LANGUAGE_RUBY,
+        version: '5.1'
+      )
+    }
+    
+    let(:product2){
+      FactoryGirl.create(
+        :product_with_versions,
+        prod_key: 'actionsupport',
+        name: 'actionsupport',
+        prod_type: Project::A_TYPE_RUBYGEMS,
+        language: Product::A_LANGUAGE_RUBY,
+        version: '5.2'
+      )
+    
+    }
+
+    let(:project_text){
+      %Q{
+        source "https://rubygems.org/"
+        gem "actioncable", "5.1-mingw32"
+        gem "actionsupport", "5.2"
+      }
+    }
+    
+    it "removes platform extensions #issue53 " do
+      product1.versions << FactoryGirl.build(:product_version, version: '5.1')
+      product1.save
+      product2.versions << FactoryGirl.build(:product_version, version: '5.2')
+      product2.save
+      
+      proj = parser.parse_content(project_text)
+      expect(proj).to_not be_nil
+      expect(proj.projectdependencies.size ).to eq(2)
+
+      dep1 = proj.dependencies[0]
+
+      expect( dep1.name ).to eq(product1[:name])
+      expect( dep1.version_requested ).to eq(product1[:version])
+      expect( dep1.comperator ).to eq('=')
+
+      dep2 = proj.dependencies[1]
+      expect( dep2.name ).to eq( product2[:name] )
+      expect( dep2.version_requested ).to eq(product2[:version])
+      expect( dep2.comperator ).to eq('=')
+    end
+   
+  end
 end

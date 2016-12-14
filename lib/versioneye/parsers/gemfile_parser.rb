@@ -243,7 +243,9 @@ class GemfileParser < CommonParser
       end
     end
 
-    strip_quotes(version)
+    #removes -x64,-x86, -mingw32 etc from version id
+    version = strip_quotes(version)
+    strip_platform_exts(version)
   end
 
 
@@ -311,6 +313,21 @@ class GemfileParser < CommonParser
   rescue => e
     log.error e.message
     log.error e.backtrace.join("\n")
+  end
+
+  def strip_platform_exts(version)
+    blacklist = Set.new ['x86', 'x64', 'java', 'mingw32'] #from nokogiri versions
+    tokens = version.to_s.split('-')
+    tokens = tokens.reduce([]) do |acc, tkn|
+      unless blacklist.include? tkn.downcase
+        #only add tokens that arenot in the blacklist
+        acc << tkn
+      end
+
+      acc
+    end
+
+    tokens.join('-')
   end
 
   private

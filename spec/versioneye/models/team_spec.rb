@@ -40,6 +40,49 @@ describe Team do
     end
   end
 
+  describe "notify_today?" do
+    it "returns false" do
+      team = Team.new({:name => 'owner' })
+      wday = DateTime.now.strftime('%A')
+      if wday.eql?('Sunday')
+        team.sunday = false
+      elsif wday.eql?('Monday')
+        team.monday = false
+      elsif wday.eql?('Tuesday')
+        team.tuesday = false
+      elsif wday.eql?('Wednesday')
+        team.wednesday = false
+      elsif wday.eql?('Thursday')
+        team.thursday = false
+      elsif wday.eql?('Friday')
+        team.friday = false
+      elsif wday.eql?('Saturday')
+        team.saturday = false
+      end
+      expect(team.notify_today?).to be_falsey
+    end
+    it "returns true" do
+      team = Team.new({:name => 'owner' })
+      wday = DateTime.now.strftime('%A')
+      if wday.eql?('Sunday')
+        team.sunday = true
+      elsif wday.eql?('Monday')
+        team.monday = true
+      elsif wday.eql?('Tuesday')
+        team.tuesday = true
+      elsif wday.eql?('Wednesday')
+        team.wednesday = true
+      elsif wday.eql?('Thursday')
+        team.thursday = true
+      elsif wday.eql?('Friday')
+        team.friday = true
+      elsif wday.eql?('Saturday')
+        team.saturday = true
+      end
+      expect(team.notify_today?).to be_truthy
+    end
+  end
+
   describe "add_member" do
     it "adds an member" do
       # false because already member

@@ -43,7 +43,7 @@ class Team < Versioneye::Model
   end
 
   def notify_today?
-    wday = DateTime.new.strftime('%A')
+    wday = DateTime.now.strftime('%A')
     return true if wday.eql?('Monday')    && self.monday
     return true if wday.eql?('Tuesday')   && self.tuesday
     return true if wday.eql?('Wednesday') && self.wednesday

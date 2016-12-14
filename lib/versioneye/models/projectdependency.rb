@@ -33,7 +33,11 @@ class Projectdependency < Versioneye::Model
 
   field :sv_ids           , type: Array, default: []  # Array of SecurityVulnerability IDs
 
+  # This only shows if the license whitelist is violated, without taking the componente whitelist into account
   field :lwl_violation    , type: String # [nil, partial, yes]
+
+  # This flag takes lwl and cwl into account and the optimistic/pesimistic mode from the lwl.
+  field :license_violation, type: Boolean, :default => false
 
   belongs_to :project, optional: true
 

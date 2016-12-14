@@ -32,11 +32,16 @@ class License < Versioneye::Model
   end
 
   def self.for_product( product, ignore_version = false )
+    licenses = []
     if ignore_version
-      return License.where(:language => product.language, :prod_key => product.prod_key)
+      licenses = License.where(:language => product.language, :prod_key => product.prod_key)
     else
-      return License.where(:language => product.language, :prod_key => product.prod_key, :version => product.version)
+      licenses = License.where(:language => product.language, :prod_key => product.prod_key, :version => product.version)
+      if licenses.empty? && product.version.to_s.scan(/\./).count == 1
+        licenses = License.where(:language => product.language, :prod_key => product.prod_key, :version => "#{product.version}.0")
+      end
     end
+    licenses
   end
 
   # Returns the licenses with nil version!

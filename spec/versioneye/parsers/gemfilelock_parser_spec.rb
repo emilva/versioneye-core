@@ -92,4 +92,64 @@ describe GemfilelockParser do
 
   end
 
+  describe "issues" do
+    let(:parser){ GemfilelockParser.new }
+
+    let(:product1){
+      FactoryGirl.create(
+        :product_with_versions,
+        prod_key: 'actioncable',
+        name: 'actioncable',
+        prod_type: Project::A_TYPE_RUBYGEMS,
+        language: Product::A_LANGUAGE_RUBY,
+        version: '5.1'
+      )
+    }
+    
+    let(:product2){
+      FactoryGirl.create(
+        :product_with_versions,
+        prod_key: 'actionsupport',
+        name: 'actionsupport',
+        prod_type: Project::A_TYPE_RUBYGEMS,
+        language: Product::A_LANGUAGE_RUBY,
+        version: '5.2'
+      )
+    
+    }
+
+    let(:project_text){
+      %Q{
+        GEM
+          remote: https://rubygems.org/
+          specs:
+            actioncable (5.1-mingw32)
+            actionsupport (5.2)
+      }
+    }
+    
+    it "removes platform extensions #issue53 " do
+      product1.versions << FactoryGirl.build(:product_version, version: '5.1')
+      product1.save
+      product2.versions << FactoryGirl.build(:product_version, version: '5.2')
+      product2.save
+      
+      proj = parser.parse_content(project_text)
+      expect(proj).to_not be_nil
+      expect(proj.projectdependencies.size ).to eq(2)
+
+      dep1 = proj.dependencies[0]
+
+      expect( dep1.name ).to eq(product1[:name])
+      expect( dep1.version_requested ).to eq(product1[:version])
+      expect( dep1.comperator ).to eq('=')
+
+      dep2 = proj.dependencies[1]
+      expect( dep2.name ).to eq( product2[:name] )
+      expect( dep2.version_requested ).to eq(product2[:version])
+      expect( dep2.comperator ).to eq('=')
+    end
+  end
+
+
 end

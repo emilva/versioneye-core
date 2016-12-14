@@ -57,7 +57,7 @@ class GithubPullRequestService < Versioneye::Service
     new_project  = ProjectImportService.create_project_from project_file, token
     new_project.name = filename
     new_project.temp = true
-    new_project.temp_lock = true # prevent from deletion
+    new_project.temp_lock = true # prevent from deleting
     new_project.license_whitelist_id   = project.license_whitelist_id
     new_project.component_whitelist_id = project.component_whitelist_id
     new_project.save
@@ -65,9 +65,9 @@ class GithubPullRequestService < Versioneye::Service
     ProjectdependencyService.update_licenses_security new_project
 
     new_project.dependencies.each do |dep|
-      if (!dep.sv_ids.empty? ||                 # security vulnerability
-           dep.license_caches.to_a.empty? ||    # unknown license
-           dep.lwl_violation.to_s.eql?('true')) # license whitelist violation
+      if (!dep.sv_ids.empty? ||                # security vulnerability
+           dep.license_caches.to_a.empty? ||   # unknown license
+           dep.license_violation == true)      # violating lwl and/or cwl
         create_pr_issue filename, dep, pr
       end
     end
@@ -93,13 +93,14 @@ class GithubPullRequestService < Versioneye::Service
       :version_current => dep.version_current,
       :license => dep.licenses_string,
       :security_count =>  dep.sv_ids.count,
-      :lwl_violation => dep.lwl_violation
+      :lwl_violation => dep.lwl_violation,
+      :license_violation => dep.license_violation
       })
     issue.pullrequest = pullrequest
     if issue.save
       pullrequest.security_count        += 1 if issue.security_count > 0
       pullrequest.unknown_license_count += 1 if issue.license.eql?('UNKNOWN')
-      pullrequest.lwl_violation_count   += 1 if issue.lwl_violation
+      pullrequest.lwl_violation_count   += 1 if issue.license_violation
       pullrequest.status = Pullrequest::A_STATUS_ERROR
       pullrequest.save
     end

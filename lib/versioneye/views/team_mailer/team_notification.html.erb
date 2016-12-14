@@ -1,9 +1,9 @@
 
-<div style="font-size: 20px;">
-  <b>Organisation:</b> <%= @orga.name %>
+<div style="font-size: 16px;">
+  <b>Organisation:</b> <a href="<%= Settings.instance.server_url %>/organisations/<%= @orga.name %>/projects"><%= @orga.name %></a>
 </div>
-<div style="font-size: 20px; padding-bottom: 15px;">
-  <b>Team:</b> <%= @team.name %>
+<div style="font-size: 16px; padding-bottom: 15px;">
+  <b>Team:</b> <a href="<%= Settings.instance.server_url %>/organisations/<%= @orga.name %>/teams/<%= @team.name %>"><%= @team.name %></a>
 </div>
 
 <table style="table-layout: fixed; width: 100%">
@@ -56,8 +56,10 @@
         <% end %>
         <% if @team.security_notifications %>
           <td>
-            <% color = project.licenses_red_sum.to_i == 0 ? "green" : "red" %>
-            <span title="security vulnerabilities" style="color: <%= color %>"><%= project.sv_count_sum %></span>
+            <% sv_count = 0 %>
+            <% sv_count = project.sv_count_sum if project.sv_count_sum.to_i >= 0 %>
+            <% color = sv_count.to_i == 0 ? "green" : "red" %>
+            <span title="security vulnerabilities" style="color: <%= color %>"><%= sv_count %></span>
           </td>
         <% end %>
       </tr>

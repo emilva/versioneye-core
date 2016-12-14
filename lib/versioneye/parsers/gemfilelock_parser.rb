@@ -49,6 +49,10 @@ class GemfilelockParser < GemfileParser
 
       version_match = row[1]
       version = version_match.gsub('(', '').gsub(')', '')
+      
+      #removes -x64,-x86, -mingw32 etc from version id
+      version = strip_platform_exts(version)
+
       dependency = Projectdependency.new
 
       product = fetch_product_for row[0]

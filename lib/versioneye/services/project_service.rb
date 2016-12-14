@@ -554,7 +554,7 @@ class ProjectService < Versioneye::Service
 
     def self.red_license? projectdependency, whitelist
       lcs = projectdependency.license_caches
-      return false if lcs.nil? || lcs.empty?
+      return false if lcs.nil? || lcs.empty? || whitelist.nil?
 
       if whitelist.pessimistic_mode == true
         lcs.each do |lc|
@@ -571,6 +571,8 @@ class ProjectService < Versioneye::Service
 
 
     def self.whitelisted? license_caches, whitelist
+      return nil if whitelist.nil?
+
       if whitelist.pessimistic_mode == true
         license_caches.each do |lc|
           return false if lc.is_whitelisted? == false

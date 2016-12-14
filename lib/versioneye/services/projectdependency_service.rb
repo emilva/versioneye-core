@@ -86,6 +86,7 @@ class ProjectdependencyService < Versioneye::Service
       project.reload
       update_licenses_security( project )
     end
+    project
   rescue => e
     log.error e.message
     log.error e.backtrace.join "\n"
@@ -311,9 +312,13 @@ class ProjectdependencyService < Versioneye::Service
           end
 
           dependency.license_caches.push licenseCach
-          dependency.lwl_violation = 'true' if licenseCach.on_whitelist == false
           licenseCach.save
+        end # end for each loop
+        dependency.lwl_violation = ProjectService.red_license?( dependency, project.license_whitelist )
+        if project.license_whitelist && ProjectService.whitelisted?( dependency.license_caches, project.license_whitelist ) == false
+          dependency.license_violation = true
         end
+        dependency.save
       elsif project.component_whitelist && project.component_whitelist.is_on_list?( dependency.cwl_key )
         licenseCach = LicenseCach.new({:name => "N/A", :on_cwl => true} )
         dependency.license_caches.push licenseCach

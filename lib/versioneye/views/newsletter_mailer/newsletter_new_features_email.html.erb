@@ -6,28 +6,33 @@
       Here are the latest news from VersionEye.
     </p>
 
-    <h3>Pull request support for GitHub</h3>
+    <h3>Team Notifications</h3>
     <p>
-      Now you can use VersionEye to test your changes directly in a Pull Request and see the results of those changes in the GitHub Pull Request UI. This way you can even enforce rules that would prevent a Pull Request merge if a dependency is blacklisted or it is flagged with a security vulnerability.<br/><br/>
-      With this new feature the developers are getting instant feedback to their changes. In real time the dependencies are analysed and the developers informed. We think it's important to run this kind of analysis as early in the development process as possible. If your software is already bundled and published to a binary repository it's too late for this kind of analysis because your software might be distributed already to a high number of devices/clients. Run your analysis as early and as often as you can ;-)<br/><br/>
-      Learn more about this cool feature <a href="https://blog.versioneye.com/2016/08/16/pull-request-support-for-github/">here</a><br/><br/>
-      A similar kind of integration will come soon for <a href="https://about.gitlab.com/">GitLab</a> as well.
+      We completely refactored the notification engine to make it more flexible.
+      Up to now you could only configure the frequency of the notification email in the project settings.
+      Many of you asked for a more flexible way to configure notifications.
+      Specially in big companies you have people with different interests. Some are only interested in security notifications
+      and others are maybe only interested in license notifications.
+      With the new model the notifications are configured on the team level.
+      Each team can choose which kind of notifications they are interested in and on which days of the week
+      they want to receive them. And now it is also possible to assign multiple teams to one project.
+      <br/><br/>
+      <img style="max-width: 100%; height: auto; width: auto\9;" src="https://versioneye.files.wordpress.com/2016/12/team_notifications_01.png?w=450">
+      <br/><br/>
+      Learn more about this cool feature <a href="https://blog.versioneye.com/2016/12/05/new-team-notifications/">here</a>.
     </p>
 
-    <h3>Vagrantfile for VersionEye</h3>
+    <h3>NVD Integration</h3>
     <p>
-      VersionEye is <a href="https://github.com/versioneye/ops_contrib">open source</a> and the
-      Docker images are on <a href="https://hub.docker.com/u/versioneye/">Docker Hub public</a>.
-      The whole VersionEye stack is composed by 8 Docker images. Now we have a
-      <a href="https://github.com/versioneye/ops_contrib/blob/master/Vagrantfile">Vagrantfile</a>
-      which makes it even easier to spin up your own VersionEye instance.
-      Simply clone the <a href="https://github.com/versioneye/ops_contrib">versioneye/ops_contrib</a> repository and run:
-
-      <pre style="background-color: #f7fafb; border: 1px solid #e3edf3; border-radius: 3px; padding: 10px;"><code>vagrant up</code></pre>
-
-      After a couple mintues you can access your own VersionEye instance at http://127.0.0.1:7070.
-      Read more about this
-      <a href="https://blog.versioneye.com/2016/08/18/vagrantfile-for-versioneye/">here</a>.
+      We started to integrate <a href="https://nvd.nist.gov/">NVD</a> as 8th security database for VersionEye.
+      NVD is one of the biggest sources of security vulnerabilities. The problem with NVD is that by default it's not
+      matching with any package manager. The OWASP project tries to do the matching with fuzzy logic, but the results
+      contain a lot of false positives/negatives. We started to build up a mapping between NVD CPEs and Maven coordinates
+      which aims to have 0 false positives/negatives. With that approach we could already identify many current
+      security vulnerabilities in popular Java projects like the Spring Framework, Vaadin and many more.
+      The good news is that all security vulnerabilities we found are fixed in the newest version of the package.
+      It makes sense to keep their dependencies up-to-date ;-)<br/>
+      We will continually improve this mapping and roll it out for the .NET Nuget platform by beginning of next year.
     </p>
 
     <p>

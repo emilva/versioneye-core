@@ -5,26 +5,52 @@ class ProjectImportService < Versioneye::Service
   A_TASK_TTL       = 60 # 60 seconds = 1 minute
 
 
-  def self.import_all_github user, pfs = ['Gemfile', 'package.json', 'pom.xml', 'bower.json', 'Podfile', 'build.gradle']
+  def self.import_all_github user, orga_id, pfs = ['Gemfile', 'Gemfile.lock', '.gemspec', 'package.json', 'pom.xml', 'bower.json', 'Podfile', 'Podfile.lock', '.gradle'], max_depth = 2
     user.github_repos.where(:fullname => /\Ablinkist/, :private => true).each do |repo|
-      next if repo.branches.to_a.empty?
+      if repo.branches.to_a.empty?
+        p " - No branches for #{repo.fullname}"
+        next
+      end
 
       branch = ''
-      branch = 'master'  if repo.branches.include?("master")
       branch = 'develop' if repo.branches.include?('develop')
-      next if branch.empty?
+      branch = 'master'  if repo.branches.include?("master")
+      if branch.empty?
+        p " - No [develop, master] branche found for #{repo.fullname}"
+        next
+      end
 
-      import_all_github_from user, repo, branch, pfs
+      import_all_github_from user, repo, branch, pfs, orga_id, max_depth
     end
+  rescue => e
+    log.error e.message
+    log.error e.backtrace.join("\n")
   end
 
 
-  def self.import_all_github_from user, repo, branch, pfs
+  def self.import_all_github_from user, repo, branch, pfs, orga_id, max_depth = 2
+    if repo.project_files[branch].empty?
+      p " - No files found for #{repo.fullname} in branch #{branch}"
+      return nil
+    end
+
     repo.project_files[branch].each do |pf|
-      path = pf['path']
-      if pfs.include?( path )
-        p "import - #{user.username} - #{repo.fullname} - #{path} - #{branch}"
-        import_from_github user, repo.fullname, pf['path'], branch
+      path  = pf['path']
+      depth = path.split("/").count
+
+      its_a_match = false
+      pfs.each do |pfs_z|
+        if path.match(/#{pfs_z}\z/i) && (depth <= max_depth)
+          its_a_match = true
+          break
+        end
+      end
+
+      if its_a_match
+        p "Import - #{user.username} - #{repo.fullname} - #{path} - #{branch}"
+        import_from_github user, repo.fullname, path, branch, orga_id
+      else
+        p " - Skip #{repo.fullname} because no #{pfs} found in branch #{branch}"
       end
     end
   rescue => e
