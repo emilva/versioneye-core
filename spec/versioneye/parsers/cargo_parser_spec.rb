@@ -37,32 +37,6 @@ describe CargoParser do
     end
   end
 
-  context "caret_lower_border" do
-    it "returns correct semver strings" do
-      expect( parser.caret_lower_border("1.2.3")).to eq('1.2.3')
-      expect( parser.caret_lower_border("1.2.3-alpha")).to eq('1.2.3')
-      expect( parser.caret_lower_border("1.2.3-beta")).to eq('1.2.3')
-
-      expect( parser.caret_lower_border('1.2') ).to eq('1.2.0')
-      expect( parser.caret_lower_border('0.2.3') ).to eq('0.2.3')
-      expect( parser.caret_lower_border('0.0.3') ).to eq('0.0.3')
-      expect( parser.caret_lower_border('0.0')).to eq('0.0.0')
-      expect( parser.caret_lower_border('0')).to eq('0.0.0')
-    end
-  end
-
-  context "caret_upper_border" do
-    it "returns correct upper lever semver" do
-      expect( parser.caret_upper_border('1.2.3') ).to eq('2.0.0')
-      expect( parser.caret_upper_border('1.2') ).to eq('2.0.0')
-      expect( parser.caret_upper_border('1') ).to eq('2.0.0')
-      expect( parser.caret_upper_border('0.2.3')).to eq('0.3.0')
-      expect( parser.caret_upper_border('0.3') ).to eq('0.4.0')
-      expect( parser.caret_upper_border('0.0.3')).to eq('0.0.4')
-      expect( parser.caret_upper_border('0.0.0')).to eq('1.0.0')
-    end
-  end
-
   context "tilde_lower_border" do
     it "returns correct lower border" do
       expect( parser.tilde_lower_border('1.2.3')).to eq('1.2.3')

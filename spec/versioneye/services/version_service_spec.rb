@@ -8,13 +8,13 @@ describe VersionService do
   describe "equal" do
 
     it "is equal" do
-      VersionService.equal("0.4.0", "0.4.0").should be_truthy
+      expect( VersionService.equal("0.4.0", "0.4.0") ).to be_truthy
     end
     it "is equal" do
-      VersionService.equal("0.4", "0.4.0").should be_truthy
+      expect( VersionService.equal("0.4", "0.4.0") ).to be_truthy
     end
     it "is not equal" do
-      VersionService.equal("1.4", "0.4.0").should be_falsy
+      expect( VersionService.equal("1.4", "0.4.0") ).to be_falsy
     end
 
   end
@@ -26,48 +26,48 @@ describe VersionService do
       product.versions.push( Version.new({:version => "1.0" }) )
       product.versions.push( Version.new({:version => "1.1" }) )
       newest = VersionService.newest_version( product.versions )
-      newest.version.should eql("1.1")
+      expect( newest.version ).to eql("1.1")
     end
 
     it "returns the newest stable version" do
       product.versions.push( Version.new({:version => "1.0" }) )
       product.versions.push( Version.new({:version => "1.1-dev" }) )
       newest = VersionService.newest_version( product.versions )
-      newest.version.should eql("1.0")
+      expect( newest.version ).to eql("1.0")
     end
 
     it "returns the newest dev version" do
       product.versions.push( Version.new({:version => "1.0" }) )
       product.versions.push( Version.new({:version => "1.1-dev" }) )
       newest = VersionService.newest_version( product.versions, VersionTagRecognizer::A_STABILITY_DEV )
-      newest.version.should eql("1.1-dev")
+      expect( newest.version ).to eql("1.1-dev")
     end
 
     it "returns the newest RC version" do
       product.versions.push( Version.new({:version => "3.2.13" }) )
       product.versions.push( Version.new({:version => "3.2.13.rc2" }) )
       newest = VersionService.newest_version( product.versions, VersionTagRecognizer::A_STABILITY_RC )
-      newest.version.should eql("3.2.13")
+      expect( newest.version ).to eql("3.2.13")
     end
 
     it "returns the newest dev version because there is no stable" do
       product.versions.push( Version.new({:version => "1.0-Beta" }) )
       product.versions.push( Version.new({:version => "1.1-dev"  }) )
       newest = VersionService.newest_version( product.versions )
-      newest.version.should eql("1.1-dev")
+      expect( newest.version ).to eql("1.1-dev")
     end
 
     it "returns the newest dev version because the other one is dev-master" do
       product.versions.push( Version.new({:version => "dev-master" }) )
       product.versions.push( Version.new({:version => "1.1-dev"  }) )
       newest = VersionService.newest_version( product.versions, VersionTagRecognizer::A_STABILITY_DEV )
-      newest.version.should eql("1.1-dev")
+      expect( newest.version ).to eql("1.1-dev")
     end
 
     it "returns the dev-master because it is the only one" do
       product.versions.push( Version.new({:version => "dev-master" }) )
       newest = VersionService.newest_version( product.versions, VersionTagRecognizer::A_STABILITY_DEV )
-      newest.version.should eql("dev-master")
+      expect( newest.version ).to eql("dev-master")
     end
 
     it "returns the newest value from minor patches" do
@@ -83,8 +83,8 @@ describe VersionService do
       versions << Version.new(version: "2.0.5-dev")
 
       newest = VersionService.newest_version(versions)
-      newest.should_not be_nil
-      newest[:version].should eq("2.0.5")
+      expect( newest ).not_to be_nil
+      expect( newest[:version] ).to eq("2.0.5")
     end
 
   end
@@ -97,19 +97,19 @@ describe VersionService do
     it "returns empty list when whitelist is nil" do
       product.versions << Version.new(version: "0.1")
       allowed_versions = VersionService.versions_by_whitelist(product.versions, nil)
-      allowed_versions.should be_empty
+      expect( allowed_versions ).to be_empty
     end
 
     it "returns empty list when whitelist is just empty array" do
       product.versions << Version.new(version: "0.1")
       allowed_versions = VersionService.versions_by_whitelist(product.versions, [])
-      allowed_versions.should be_empty
+      expect( allowed_versions ).to be_empty
     end
 
     it "returns empty list when whitelist has no matching versions" do
       product.versions << Version.new(version: "0.1")
       allowed_versions = VersionService.versions_by_whitelist(product.versions, ["2.0"])
-      allowed_versions.should be_empty
+      expect( allowed_versions ).to be_empty
     end
 
     it "returns correct version when whitelist has only one version" do
@@ -117,8 +117,9 @@ describe VersionService do
       product.versions << Version.new(version: "0.2")
       product.versions << Version.new(version: "1.2")
       allowed_versions = VersionService.versions_by_whitelist(product.versions, ["0.2"])
-      allowed_versions.should_not be_empty
-      allowed_versions.first[:version].should eq("0.2")
+
+      expect( allowed_versions ).not_to be_empty
+      expect( allowed_versions.first[:version] ).to eq("0.2")
     end
 
     it "returns correct versions when whitelist has many matching versions" do
@@ -127,10 +128,10 @@ describe VersionService do
       product.versions << Version.new(version: "1.2")
       allowed_versions = VersionService.versions_by_whitelist(product.versions, ["0.2", "1.0", "1.2"])
 
-      allowed_versions.should_not be_empty
-      allowed_versions.size.should eq(2)
-      allowed_versions[0][:version].should eq("0.2")
-      allowed_versions[1][:version].should eq("1.2")
+      expect( allowed_versions ).not_to be_empty
+      expect( allowed_versions.size ).to eq(2)
+      expect( allowed_versions[0][:version] ).to eq("0.2")
+      expect( allowed_versions[1][:version] ).to eq("1.2")
     end
 
 
@@ -149,7 +150,8 @@ describe VersionService do
         product.versions.push(version)
       }
       version = VersionService.newest_version_number( product.versions )
-      version.should eql("5")
+
+      expect( version ).to eql("5")
     end
 
     it "returns the newest version correct. With decimal numbers." do
@@ -162,7 +164,7 @@ describe VersionService do
         product.versions.push(version)
       }
       version = VersionService.newest_version_number( product.versions )
-      version.should eql("1.5")
+      expect( version ).to eql("1.5")
     end
 
     it "returns the newest version correct. With long numbers." do
@@ -171,7 +173,8 @@ describe VersionService do
       product.versions.push( Version.new({ :version => "1.2.29" }) )
       product.versions.push( Version.new({ :version => "1.3" }) )
       version = VersionService.newest_version_number( product.versions )
-      version.should eql("1.3")
+
+      expect( version ).to eql("1.3")
     end
 
     it "returns the newest version correct. With long numbers. Wariant 2." do
@@ -180,7 +183,8 @@ describe VersionService do
       product.versions.push( Version.new({ :version => "1.229" }) )
       product.versions.push( Version.new({ :version => "1.30" }) )
       version = VersionService.newest_version_number( product.versions )
-      version.should eql("1.229")
+
+      expect( version ).to eql("1.229")
     end
 
   end
@@ -192,7 +196,8 @@ describe VersionService do
       versions.push( Version.new({ :version => "1.22"  }) )
       versions.push( Version.new({ :version => "1.229" }) )
       versions.push( Version.new({ :version => "1.30"  }) )
-      VersionService.newest_version_from(versions).version.should eql("1.229")
+
+      expect( VersionService.newest_version_from(versions).version ).to eql("1.229")
     end
 
   end
@@ -208,8 +213,8 @@ describe VersionService do
       versions << Version.new({version: "1.7"})
 
       newest = VersionService.newest_version_from_wildcard(versions, '1.X')
-      newest.should_not be_nil
-      newest.should eq("1.7")
+      expect( newest ).not_to be_nil
+      expect( newest ).to eq("1.7")
     end
 
     it "returns newest version for 2.0.*" do
@@ -220,8 +225,8 @@ describe VersionService do
       versions << Version.new({version: "2.1.1"})
 
       newest = VersionService.newest_version_from_wildcard(versions, '2.0.*')
-      newest.should_not be_nil
-      newest.should eq('2.0.5')
+      expect( newest ).not_to be_nil
+      expect( newest ).to eq('2.0.5')
     end
 
   end
@@ -229,13 +234,13 @@ describe VersionService do
   describe "version_approximately_greater_than_starter" do
 
     it "returns the given value" do
-      VersionService.version_approximately_greater_than_starter("1.0").should eql("1.")
+      expect( VersionService.version_approximately_greater_than_starter("1.0") ).to eql("1.")
     end
     it "returns the given value" do
-      VersionService.version_approximately_greater_than_starter("1.2").should eql("1.")
+      expect( VersionService.version_approximately_greater_than_starter("1.2") ).to eql("1.")
     end
     it "returns the given value" do
-      VersionService.version_approximately_greater_than_starter("1.2.3").should eql("1.2.")
+      expect( VersionService.version_approximately_greater_than_starter("1.2.3") ).to eql("1.2.")
     end
   end
 
@@ -251,7 +256,8 @@ describe VersionService do
       product.versions.push( Version.new({:version => "1.3"}) )
       product.versions.push( Version.new({:version => "2.0"}) )
       tilde_version = VersionService.version_tilde_newest(product.versions, "1.2")
-      tilde_version.version.should eql("1.3")
+
+      expect( tilde_version.version ).to eql("1.3")
     end
 
     it "returns the right value" do
@@ -262,7 +268,8 @@ describe VersionService do
       product.versions.push( Version.new({:version => "1.4"}) )
       product.versions.push( Version.new({:version => "2.0"}) )
       tilde_version = VersionService.version_tilde_newest(product.versions, "1.2")
-      tilde_version.version.should eql("1.4")
+
+      expect( tilde_version.version ).to eql("1.4")
     end
 
     it "returns the right value" do
@@ -273,7 +280,8 @@ describe VersionService do
       product.versions.push( Version.new({:version => "2.3.1"}) )
       product.versions.push( Version.new({:version => "3.0.0"}) )
       tilde_version = VersionService.version_tilde_newest( product.versions, "~2.1" )
-      tilde_version.version.should eql("2.3.1")
+
+      expect( tilde_version.version ).to eql("2.3.1")
     end
 
     it "returns the right value" do
@@ -284,7 +292,8 @@ describe VersionService do
       product.versions.push( Version.new({:version => "2.3.1"}) )
       product.versions.push( Version.new({:version => "3.0.1"}) )
       tilde_version = VersionService.version_tilde_newest( product.versions, "~3.0" )
-      tilde_version.version.should eql("3.7.29")
+
+      expect( tilde_version.version ).to eql("3.7.29")
     end
 
     it "returns the right value" do
@@ -295,29 +304,30 @@ describe VersionService do
       product.versions.push( Version.new({:version => "2.3.1"}) )
       product.versions.push( Version.new({:version => "3.0.1"}) )
       tilde_version = VersionService.version_tilde_newest( product.versions, "~3" )
-      tilde_version.version.should eql("3.7.29")
+
+      expect( tilde_version.version ).to eql("3.7.29")
     end
 
   end
 
   describe "version_tilde_newest" do
     it "returns the right value 2.0.0" do
-      VersionService.tile_border( "1.2" ).should eql("2.0")
+      expect( VersionService.tile_border( "1.2" ) ).to eql("2.0")
     end
     it "returns the right value 2.0.0" do
-      VersionService.tile_border( "1.2.1" ).should eql("1.3")
+      expect( VersionService.tile_border( "1.2.1" ) ).to eql("1.3")
     end
     it "returns the right value 2.0.0" do
-      VersionService.tile_border( "1.2.1-1" ).should eql("1.3")
+      expect( VersionService.tile_border( "1.2.1-1" ) ).to eql("1.3")
     end
     it "returns the right value 2.0.0" do
-      VersionService.tile_border( "1.2.1_1" ).should eql("1.3")
+      expect( VersionService.tile_border( "1.2.1_1" ) ).to eql("1.3")
     end
     it "returns the right value 2.0.0" do
-      VersionService.tile_border( "1.2.1_RC" ).should eql("1.3")
+      expect( VersionService.tile_border( "1.2.1_RC" ) ).to eql("1.3")
     end
     it "returns the right value 3" do
-      VersionService.tile_border( 2 ).should eql( 3 )
+      expect( VersionService.tile_border( 2 ) ).to eql( 3 )
     end
   end
 
@@ -332,9 +342,9 @@ describe VersionService do
       product.versions.push( Version.new({ :version => "1.4" }) )
 
       range = VersionService.version_range(product.versions, "1.1", "1.3")
-      range.count.should eql(3)
-      range.first.version.should eql("1.1")
-      range.last.version.should  eql("1.3")
+      expect( range.count ).to eql(3)
+      expect( range.first.version ).to eql("1.1")
+      expect( range.last.version ).to  eql("1.3")
     end
 
   end
@@ -342,7 +352,7 @@ describe VersionService do
   describe "versions_start_with" do
 
     it "returns an empty array" do
-      VersionService.versions_start_with(nil, "1.0").should eql([])
+      expect( VersionService.versions_start_with(nil, "1.0") ).to eql([])
     end
 
     it "returns the correct array" do
@@ -351,13 +361,15 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "1.3" } ) )
       product.versions.push( Version.new( { :version => "2.0" } ) )
       results = VersionService.versions_start_with(product.versions, "1")
-      results.size.should eql(3)
-      results.first.version.should eql("1.1")
-      results.last.version.should  eql("1.3")
+
+      expect( results.size ).to eql(3)
+      expect( results.first.version ).to eql("1.1")
+      expect( results.last.version ).to  eql("1.3")
+
       results = VersionService.versions_start_with(product.versions, "1.")
-      results.size.should eql(3)
-      results.first.version.should eql("1.1")
-      results.last.version.should  eql("1.3")
+      expect( results.size ).to eql(3)
+      expect( results.first.version ).to eql("1.1")
+      expect( results.last.version ).to eql("1.3")
     end
 
   end
@@ -372,8 +384,8 @@ describe VersionService do
 
     it "returns the newest value except the one specific value" do
       result = VersionService.newest_but_not(versions, "1.3")
-      result.should_not be_nil
-      result[:version].should eq("1.2")
+      expect( result ).not_to be_nil
+      expect( result[:version] ).to eq("1.2")
     end
   end
 
@@ -385,7 +397,8 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "1.1" } ) )
       product.versions.push( Version.new( { :version => "1.2" } ) )
       ver = VersionService.greater_than(product.versions, "1.1")
-      ver.version.should eql("1.2")
+
+      expect( ver.version ).to eql("1.2")
     end
 
   end
@@ -399,7 +412,7 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "1.1" } ) )
       product.versions.push( Version.new( { :version => "1.2" } ) )
       ver = VersionService.greater_than_or_equal(product.versions, "1.1")
-      ver.version.should eql("1.2")
+      expect( ver.version ).to eql("1.2")
     end
 
     it "returns the highest value" do
@@ -407,7 +420,8 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "1.0" } ) )
       product.versions.push( Version.new( { :version => "1.1" } ) )
       ver = VersionService.greater_than_or_equal(product.versions, "1.1")
-      ver.version.should eql("1.1")
+
+      expect( ver.version ).to eql("1.1")
     end
 
   end
@@ -421,7 +435,8 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "1.1" } ) )
       product.versions.push( Version.new( { :version => "1.2" } ) )
       ver = VersionService.smaller_than(product.versions, "1.1")
-      ver.version.should eql("1.0")
+
+      expect( ver.version ).to eql("1.0")
     end
 
     it "returns the highest value" do
@@ -430,7 +445,8 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "2.2.3" } ) )
       product.versions.push( Version.new( { :version => "2.3.0" } ) )
       ver = VersionService.smaller_than(product.versions, "2.4-dev")
-      ver.version.should eql("2.3.0")
+
+      expect( ver.version ).to eql("2.3.0")
     end
 
   end
@@ -444,14 +460,16 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "1.1" } ) )
       product.versions.push( Version.new( { :version => "1.2" } ) )
       ver = VersionService.smaller_than_or_equal(product.versions, "1.1")
-      ver.version.should eql("1.1")
+
+      expect( ver.version ).to eql("1.1")
     end
 
     it "returns the highest value" do
       product.versions = Array.new
       product.versions.push( Version.new( { :version => "1.0" } ) )
       ver = VersionService.smaller_than_or_equal(product.versions, "1.1")
-      ver.version.should eql("1.0")
+
+      expect( ver.version ).to eql("1.0")
     end
 
   end
@@ -466,9 +484,10 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "1.2" } ) )
       product.versions.push( Version.new( { :version => "1.3" } ) )
       versions = VersionService.from_ranges(product.versions, ">=1.0, <1.2")
-      versions.size.should eq(2)
-      versions.first.to_s.should eq("1.0")
-      versions.last.to_s.should eq("1.1")
+
+      expect( versions.size ).to eq(2)
+      expect( versions.first.to_s ).to eq("1.0")
+      expect( versions.last.to_s ).to eq("1.1")
     end
 
     it "returns the right values" do
@@ -478,8 +497,9 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "1.2" } ) )
       product.versions.push( Version.new( { :version => "1.3" } ) )
       versions = VersionService.from_ranges(product.versions, ">1.0, <1.2")
-      versions.size.should eq(1)
-      versions.first.to_s.should eq("1.1")
+
+      expect( versions.size ).to eq(1)
+      expect( versions.first.to_s ).to eq("1.1")
     end
 
     it "returns the right values" do
@@ -489,9 +509,10 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "1.2" } ) )
       product.versions.push( Version.new( { :version => "1.3" } ) )
       versions = VersionService.from_ranges(product.versions, ">=1.0, <=1.2")
-      versions.size.should eq(3)
-      versions.first.to_s.should eq("1.0")
-      versions.last.to_s.should eq("1.2")
+
+      expect( versions.size ).to eq(3)
+      expect( versions.first.to_s ).to eq("1.0")
+      expect( versions.last.to_s  ).to eq("1.2")
     end
 
     it "returns the right values" do
@@ -501,9 +522,10 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "1.2" } ) )
       product.versions.push( Version.new( { :version => "1.3" } ) )
       versions = VersionService.from_ranges(product.versions, ">=1.0, !=1.2")
-      versions.size.should eq(3)
-      versions.first.to_s.should eq("1.0")
-      versions.last.to_s.should eq("1.3")
+
+      expect( versions.size ).to eq(3)
+      expect( versions.first.to_s ).to eq("1.0")
+      expect( versions.last.to_s ).to eq("1.3")
     end
 
     it "returns the right values" do
@@ -516,9 +538,10 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "2.1.1" } ) )
       product.versions.push( Version.new( { :version => "2.2.5" } ) )
       versions = VersionService.from_ranges(product.versions, ">=2.0.0, <2.0.11")
-      versions.size.should eq(4)
-      versions.first.to_s.should eq("2.0.0")
-      versions.last.to_s.should eq("2.0.10")
+
+      expect( versions.size ).to eq(4)
+      expect( versions.first.to_s ).to eq("2.0.0")
+      expect( versions.last.to_s ).to eq("2.0.10")
     end
 
     it "returns the right values" do
@@ -531,9 +554,10 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "2.1.1" } ) )
       product.versions.push( Version.new( { :version => "2.2.5" } ) )
       versions = VersionService.from_ranges(product.versions, "<2.1.0")
-      versions.size.should eq(5)
-      versions.first.to_s.should eq("2.0.0")
-      versions.last.to_s.should eq("2.0.11")
+
+      expect( versions.size ).to eq(5)
+      expect( versions.first.to_s ).to eq("2.0.0")
+      expect( versions.last.to_s ).to eq("2.0.11")
     end
 
     it "returns the right values" do
@@ -546,9 +570,10 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "2.1.1" } ) )
       product.versions.push( Version.new( { :version => "2.2.5" } ) )
       versions = VersionService.from_ranges(product.versions, "2.0.0, 2.1.1")
-      versions.size.should eq(2)
-      versions.first.to_s.should eq("2.0.0")
-      versions.last.to_s.should eq("2.1.1")
+
+      expect( versions.size ).to eq(2)
+      expect( versions.first.to_s ).to eq("2.0.0")
+      expect( versions.last.to_s ).to eq("2.1.1")
     end
 
     it "returns the right values" do
@@ -561,9 +586,10 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "2.1.1" } ) )
       product.versions.push( Version.new( { :version => "2.2.5" } ) )
       versions = VersionService.from_ranges(product.versions, "<2.0.1, 2.1.1")
-      versions.size.should eq(2)
-      versions.first.to_s.should eq("2.0.0")
-      versions.last.to_s.should eq("2.1.1")
+
+      expect( versions.size ).to eq(2)
+      expect( versions.first.to_s ).to eq("2.0.0")
+      expect( versions.last.to_s ).to eq("2.1.1")
     end
 
     it "returns the right values" do
@@ -576,9 +602,10 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "2.1.1" } ) )
       product.versions.push( Version.new( { :version => "2.2.5" } ) )
       versions = VersionService.from_ranges(product.versions, "2.0.X")
-      versions.size.should eq(5)
-      versions.first.to_s.should eq("2.0.0")
-      versions.last.to_s.should eq("2.0.11")
+
+      expect( versions.size ).to eq(5)
+      expect( versions.first.to_s ).to eq("2.0.0")
+      expect( versions.last.to_s ).to eq("2.0.11")
     end
 
     it "returns the right values" do
@@ -591,9 +618,10 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "2.1.1" } ) )
       product.versions.push( Version.new( { :version => "2.2.5" } ) )
       versions = VersionService.from_ranges(product.versions, "2.0.X, 2.1.X")
-      versions.size.should eq(6)
-      versions.first.to_s.should eq("2.0.0")
-      versions.last.to_s.should eq("2.1.1")
+
+      expect( versions.size ).to eq(6)
+      expect( versions.first.to_s ).to eq("2.0.0")
+      expect( versions.last.to_s ).to eq("2.1.1")
     end
 
     it "returns the right values" do
@@ -606,9 +634,10 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "2.1.1" } ) )
       product.versions.push( Version.new( { :version => "2.2.5" } ) )
       versions = VersionService.from_ranges(product.versions, "~> 2.0.0")
-      versions.size.should eq(5)
-      versions.first.to_s.should eq("2.0.0")
-      versions.last.to_s.should eq("2.0.11")
+
+      expect( versions.size ).to eq(5)
+      expect( versions.first.to_s ).to eq("2.0.0")
+      expect( versions.last.to_s ).to eq("2.0.11")
     end
 
   end
@@ -629,9 +658,10 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "4.5.0" } ) )
       product.versions.push( Version.new( { :version => "4.6.0" } ) )
       versions = VersionService.from_or_ranges(product.versions, "<3.11 || >= 4 <4.5")
-      versions.size.should eq(7)
-      versions.first.to_s.should eq("2.10.0")
-      versions.last.to_s.should eq("4.4.0")
+
+      expect( versions.size ).to eq(7)
+      expect( versions.first.to_s ).to eq("2.10.0")
+      expect( versions.last.to_s ).to eq("4.4.0")
     end
 
     it "returns the right values" do
@@ -644,9 +674,10 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "2.1.1" } ) )
       product.versions.push( Version.new( { :version => "2.2.5" } ) )
       versions = VersionService.from_or_ranges(product.versions, "2.0.X, 2.1.X")
-      versions.size.should eq(6)
-      versions.first.to_s.should eq("2.0.0")
-      versions.last.to_s.should eq("2.1.1")
+
+      expect( versions.size ).to eq(6)
+      expect( versions.first.to_s ).to eq("2.0.0")
+      expect( versions.last.to_s ).to eq("2.1.1")
     end
 
     it "returns the right values" do
@@ -658,9 +689,10 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "2.1.1" } ) )
       product.versions.push( Version.new( { :version => "2.2.5" } ) )
       versions = VersionService.from_or_ranges(product.versions, "2.0.x || 2.1.x")
-      versions.size.should eq(5)
-      versions.first.to_s.should eq("2.0.0")
-      versions.last.to_s.should eq("2.1.1")
+
+      expect( versions.size ).to eq(5)
+      expect( versions.first.to_s ).to eq("2.0.0")
+      expect( versions.last.to_s ).to eq("2.1.1")
     end
 
     it "returns the right values" do
@@ -668,8 +700,9 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "2.0.0" } ) )
       product.versions.push( Version.new( { :version => "2.0.1" } ) )
       versions = VersionService.from_or_ranges(product.versions, "=2.0.0")
-      versions.size.should eq(1)
-      versions.first.to_s.should eq("2.0.0")
+
+      expect( versions.size ).to eq(1)
+      expect( versions.first.to_s ).to eq("2.0.0")
     end
 
     it "returns the right values" do
@@ -677,8 +710,9 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "2.0.0" } ) )
       product.versions.push( Version.new( { :version => "2.0.1" } ) )
       versions = VersionService.from_or_ranges(product.versions, "==2.0.0")
-      versions.size.should eq(1)
-      versions.first.to_s.should eq("2.0.0")
+
+      expect( versions.size ).to eq(1)
+      expect( versions.first.to_s ).to eq("2.0.0")
     end
 
     it "returns the right values" do
@@ -686,8 +720,9 @@ describe VersionService do
       product.versions.push( Version.new( { :version => "2.0.0" } ) )
       product.versions.push( Version.new( { :version => "2.0.1" } ) )
       versions = VersionService.from_or_ranges(product.versions, "2.0.0")
-      versions.size.should eq(1)
-      versions.first.to_s.should eq("2.0.0")
+
+      expect( versions.size ).to eq(1)
+      expect( versions.first.to_s ).to eq("2.0.0")
     end
   end
 
@@ -717,23 +752,82 @@ describe VersionService do
     end
   end
 
+  context "caret_lower_border" do
+    it "returns correct semver strings" do
+      expect( VersionService.caret_lower_border("1.2.3")).to eq('1.2.3')
+      expect( VersionService.caret_lower_border("1.2.3-alpha")).to eq('1.2.3')
+      expect( VersionService.caret_lower_border("1.2.3-beta")).to eq('1.2.3')
+
+      expect( VersionService.caret_lower_border('1.2') ).to eq('1.2.0')
+      expect( VersionService.caret_lower_border('0.2.3') ).to eq('0.2.3')
+      expect( VersionService.caret_lower_border('0.0.3') ).to eq('0.0.3')
+      expect( VersionService.caret_lower_border('0.0')).to eq('0.0.0')
+      expect( VersionService.caret_lower_border('0')).to eq('0.0.0')
+    end
+  end
+
+  context "caret_upper_border" do
+    it "returns correct upper lever semver" do
+      expect( VersionService.caret_upper_border('1.2.3') ).to eq('2.0.0')
+      expect( VersionService.caret_upper_border('1.2') ).to eq('2.0.0')
+      expect( VersionService.caret_upper_border('1') ).to eq('2.0.0')
+      expect( VersionService.caret_upper_border('0.2.3')).to eq('0.3.0')
+      expect( VersionService.caret_upper_border('0.3') ).to eq('0.4.0')
+      expect( VersionService.caret_upper_border('0.0.3')).to eq('0.0.4')
+      expect( VersionService.caret_upper_border('0.0.0')).to eq('1.0.0')
+    end
+  end
+
+  describe 'newest_caret_version' do
+    it "returns for ^0 biggest value in the range 0 <= x < 1.0.0" do
+      versions = ['0.0.9', '0.1.0', '0.9.2', '1.0.0', '1.0.1', '1.2.0']
+      expect( VersionService.newest_caret_version(versions, '0') ).to eq('0.9.2')
+    end
+
+    it "returns for ^0.1 biggest value in the range 0.1 <= x < 0.2.0" do
+      versions = ['0.0.9', '0.1.0', '0.1.9', '0.2.0', '0.2.1', '1.0.0']
+      expect( VersionService.newest_caret_version(versions, '0.1') ).to eq('0.1.9')
+    end
+
+    it "returns for ^0.2.3 biggest value in the range 0.2.3 <= x < 0.3.0" do
+      versions = ['0.1.0', '0.2.1', '0.2.3', '0.2.9', '0.2.11', '0.3.0', '0.3.1']
+      expect( VersionService.newest_caret_version(versions, '0.2.3')).to eq('0.2.11')
+    end
+
+    it "returns for ^1.2.3 biggest value in the range 1.2.3 <= x < 2.0.0" do
+      versions = ['1.2.2', '1.2.3', '1.2.9', '1.3.0', '1.5.2', '2.0.0', '2.0.1']
+      expect( VersionService.newest_caret_version(versions, '1.2.3')).to eq('1.5.2')
+    end
+
+    it "returns for ^1.2 biggest value in the range 1.2.0 <= x < 2.0.0" do
+      versions = ['1.2.2', '1.2.3', '1.2.9', '1.3.0', '1.5.2', '2.0.0', '2.0.1']
+      expect( VersionService.newest_caret_version(versions, '1.2')).to eq('1.5.2')
+    end
+
+    it "returns for ^1 biggest value in the range 1.0 <= x < 2.0.0" do
+      versions = ['0.9.0', '1.2.0', '1.2.9', '1.3.0', '1.5.2', '2.0.0', '2.0.1']
+      expect( VersionService.newest_caret_version(versions, '1')).to eq('1.5.2')
+    end
+
+
+  end
 
   describe 'average_release_time' do
 
     it 'returns nil for nil' do
-      VersionService.average_release_time(nil).should be_nil
+      expect( VersionService.average_release_time(nil) ).to be_nil
     end
 
     it 'returns nil for empty array' do
-      VersionService.average_release_time(Array.new).should be_nil
+      expect( VersionService.average_release_time(Array.new) ).to be_nil
     end
 
     it 'returns nil for array with 1 element' do
-      VersionService.average_release_time([Version.new]).should be_nil
+      expect( VersionService.average_release_time([Version.new]) ).to be_nil
     end
 
     it 'returns nil for array with 2 elements' do
-      VersionService.average_release_time([Version.new, Version.new ]).should be_nil
+      expect( VersionService.average_release_time([Version.new, Version.new ]) ).to be_nil
     end
 
     it 'returns 1 day' do
@@ -741,7 +835,8 @@ describe VersionService do
       version_2 = Version.new :released_at => DateTime.new(2014, 01, 03)
       version_3 = Version.new :released_at => DateTime.new(2014, 01, 05)
       versions = [version_1, version_2, version_3]
-      VersionService.average_release_time( versions ).should eq(1)
+
+      expect( VersionService.average_release_time( versions ) ).to eq(1)
     end
 
     it 'returns 20 day' do
@@ -749,7 +844,8 @@ describe VersionService do
       version_2 = Version.new :released_at => DateTime.new(2014, 02, 01)
       version_3 = Version.new :released_at => DateTime.new(2014, 03, 02)
       versions = [version_1, version_2, version_3]
-      VersionService.average_release_time( versions ).should eq(20)
+
+      expect( VersionService.average_release_time( versions ) ).to eq(20)
     end
 
   end
@@ -757,15 +853,15 @@ describe VersionService do
   describe 'estimated_average_release_time' do
 
     it 'returns nil for nil' do
-      VersionService.estimated_average_release_time(nil).should be_nil
+      expect( VersionService.estimated_average_release_time(nil) ).to be_nil
     end
 
     it 'returns nil for empty array' do
-      VersionService.estimated_average_release_time(Array.new).should be_nil
+      expect( VersionService.estimated_average_release_time(Array.new) ).to be_nil
     end
 
     it 'returns nil for array with 1 element' do
-      VersionService.estimated_average_release_time([Version.new]).should be_nil
+      expect( VersionService.estimated_average_release_time([Version.new]) ).to be_nil
     end
 
     it 'returns 1 day' do
@@ -773,7 +869,8 @@ describe VersionService do
       version_2 = Version.new :created_at => DateTime.new(2014, 01, 03)
       version_3 = Version.new :created_at => DateTime.new(2014, 01, 05)
       versions = [version_1, version_2, version_3]
-      VersionService.estimated_average_release_time( versions ).should eq(1)
+
+      expect( VersionService.estimated_average_release_time( versions ) ).to eq(1)
     end
 
     it 'returns 20 day' do
@@ -781,7 +878,8 @@ describe VersionService do
       version_2 = Version.new :created_at => DateTime.new(2014, 02, 01)
       version_3 = Version.new :created_at => DateTime.new(2014, 03, 02)
       versions = [version_1, version_2, version_3]
-      VersionService.estimated_average_release_time( versions ).should eq(20)
+
+      expect( VersionService.estimated_average_release_time( versions ) ).to eq(20)
     end
 
   end

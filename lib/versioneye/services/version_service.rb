@@ -347,6 +347,67 @@ class VersionService < Versioneye::Service
     prod.versions
   end
 
+  def self.newest_caret_version(versions, version_label)
+      lower_border = caret_lower_border version_label
+      upper_border = caret_upper_border version_label
+      if lower_border.nil? or upper_border.nil?
+        return version_label
+      end
+
+      greater_than = VersionService.greater_than_or_equal versions, lower_border, true
+      newest_version = VersionService.smaller_than(greater_than, upper_border)
+      if newest_version
+        newest_version
+      else
+        version_label
+      end
+  end
+
+  # turns caret semver selector into lower version
+  # returns:
+  # nil - failed to parse semver
+  # string - lower range of caret version
+  def self.caret_lower_border(version_label)
+    lower_ver = SemVer.parse version_label
+    return nil if lower_ver.nil?
+    #remove metdata details
+    lower_ver.metadata = nil
+    lower_ver.prerelease = nil
+
+    lower_ver.to_s
+  end
+
+  # calculates upper version of caret semver
+  # it increments most left-most non-zero value
+  # returns:
+  # nil - failed to parse semver
+  # string - upper range of caret version
+  def self.caret_upper_border(version_label)
+    upper_ver = SemVer.parse version_label
+    return nil if upper_ver.nil?
+
+    #remove metdata and pre-release details
+    upper_ver.metadata = nil
+    upper_ver.prerelease = nil
+
+    #increase left-most non-zero version item
+    if upper_ver.major != 0
+      upper_ver.major += 1
+      upper_ver.minor = 0
+      upper_ver.patch = 0
+    elsif upper_ver.major == 0 and upper_ver.minor != 0
+      upper_ver.minor += 1
+      upper_ver.patch = 0
+    else
+      if upper_ver.patch != 0
+        upper_ver.patch += 1
+      else
+        upper_ver.major += 1 #when version is '0.0.0'
+      end
+    end
+
+    upper_ver.to_s
+  end
 
   def self.average_release_time( versions )
     return nil if versions.nil? || versions.empty? || versions.size == 1

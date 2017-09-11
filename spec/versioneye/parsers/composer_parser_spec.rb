@@ -8,14 +8,55 @@ describe ComposerParser do
   let(:product_23){ ProductFactory.create_for_bower("bootstrap", "3.3") }
   let(:product_24){ ProductFactory.create_for_npm("request", "1.0.0") }
 
+  let(:dep1){
+    Projectdependency.new(
+      language: Product::A_LANGUAGE_PHP,
+      prod_key: 'symfony/symfony',
+      name: 'symfony/symfony'
+    )
+  }
+
+  describe 'parse_requested_version' do
+    before do
+      product_01.versions << Version.new(version: '0.1.2')
+      product_01.versions << Version.new(version: '0.9')
+      product_01.versions << Version.new(version: '1.0.0')
+      product_01.versions << Version.new(version: '2.0.7')
+      product_01.versions << Version.new(version: '2.2.9')
+      product_01.versions << Version.new(version: '3.0.0')
+      product_01.versions << Version.new(version: '3.0.1')
+      product_01.save
+    end
+
+    it 'resolves correctly caret version `^0.1`' do
+      parser.parse_requested_version('^0.1', dep1, product_01)
+      expect(dep1[:comperator]).to eq('^')
+      expect(dep1[:version_label]).to eq('^0.1')
+      expect(dep1[:version_requested]).to eq('0.1.2')
+    end
+
+    it 'resolves correctly caret version `^0.1.0`' do
+      parser.parse_requested_version('^0.1.0', dep1, product_01)
+      expect(dep1[:comperator]).to eq('^')
+      expect(dep1[:version_label]).to eq('^0.1.0')
+      expect(dep1[:version_requested]).to eq('0.1.2')
+    end
+
+    it 'resolves correctly caret version `^2.0.7`' do
+      parser.parse_requested_version('^2.0.7', dep1, product_01)
+
+      expect(dep1[:comperator]).to eq('^')
+      expect(dep1[:version_label]).to eq('^2.0.7')
+      expect(dep1[:version_requested]).to eq('2.2.9')
+    end
+  end
+
   describe 'fetch_product_for' do
     before do
       product_01.save
       product_23.save
       product_24.save
     end
-
-
 
     it "returns correct Composer product" do
       prod = parser.fetch_product_for 'symfony/symfony'

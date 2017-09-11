@@ -229,29 +229,14 @@ class ComposerParser < CommonParser
       dependency.comperator = "~"
 
     when version.match(/\A\^/)
-      # Compatible with operator
       dependency.comperator = "^"
       dependency.version_label = version
 
-      ver = version.gsub("\>", "")
-      ver = ver.gsub("^", "")
-      ver = ver.gsub(" ", "")
-
-      semver = SemVer.parse( ver )
-      if semver.nil?
-        dependency.version_requested = ver
-      else
-        start = ver
-        major = semver.major + 1
-        upper_range = "#{major}.0.0"
-        version_range   = VersionService.version_range(product.versions, start, upper_range )
-        highest_version = VersionService.newest_version_from( version_range )
-        if highest_version
-          dependency.version_requested = highest_version.to_s
-        else
-          dependency.version_requested = ver
-        end
-      end
+      version_label = version.gsub(/\A\^\s*/, '').to_s.strip
+      highest_version = VersionService.newest_caret_version(
+        product.versions, version_label
+      )
+      dependency[:version_requested] = (highest_version || version_label)
 
     else # =
       dependency.version_requested = version
