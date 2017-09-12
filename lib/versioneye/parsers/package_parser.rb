@@ -256,34 +256,8 @@ class PackageParser < CommonParser
       ver = ver.gsub(" ", "")
       ver = ver.gsub(/\.\*\z/i, ".0")
       ver = ver.gsub(/\.x\z/i, ".0")
-
-      semver = SemVer.parse( ver )
-      if semver.nil?
-        dependency.version_requested = ver
-      else
-        start = ver
-        if start.count(".") == 1
-          start = "#{start}.0"
-        end
-
-        major = semver.major + 1
-        upper_range = "#{major}.0.0"
-        if start.match(/0\.\d+\.\d+\z/i)
-          minor = semver.minor + 1
-          upper_range = "0.#{minor}.0"
-        end
-
-        version_range   = VersionService.version_range(product.versions, start, upper_range )
-        version_range.each do |v|
-          version_range.delete(v) if v.to_s.eql?(upper_range)
-        end
-        highest_version = VersionService.newest_version_from( version_range )
-        if highest_version
-          dependency.version_requested = highest_version.to_s
-        else
-          dependency.version_requested = ver
-        end
-      end
+      highest_version = VersionService.newest_caret_version( product.versions, ver)
+      dependency[:version_requested] = highest_version || ver
 
     elsif version.match(/\.x\z/i) || version.match(/\.\*\z/i)
       # X Version Ranges or .* version range

@@ -63,6 +63,22 @@ class VersionService < Versioneye::Service
     return newest_version_number( versions_filtered, stability )
   end
 
+  def self.newest_caret_version(versions, version_label)
+      lower_border = caret_lower_border version_label
+      upper_border = caret_upper_border version_label
+      if lower_border.nil? or upper_border.nil?
+        return version_label
+      end
+
+      greater_than = VersionService.greater_than_or_equal versions, lower_border, true
+      newest_version = VersionService.smaller_than(greater_than, upper_border)
+      if newest_version
+        newest_version
+      else
+        version_label
+      end
+  end
+
 
   # http://guides.rubygems.org/patterns/#semantic_versioning
   # http://robots.thoughtbot.com/rubys-pessimistic-operator
@@ -75,7 +91,6 @@ class VersionService < Versioneye::Service
     return "#{starter}."
   end
 
-
   def self.version_tilde_newest( versions, value )
     return nil if value.nil?
 
@@ -86,7 +101,6 @@ class VersionService < Versioneye::Service
     range = self.smaller_than( greater_than, upper_border, true )
     VersionService.newest_version_from( range )
   end
-
 
   def self.tile_border( value )
     if value.is_a? Integer
@@ -345,22 +359,6 @@ class VersionService < Versioneye::Service
       end
     end
     prod.versions
-  end
-
-  def self.newest_caret_version(versions, version_label)
-      lower_border = caret_lower_border version_label
-      upper_border = caret_upper_border version_label
-      if lower_border.nil? or upper_border.nil?
-        return version_label
-      end
-
-      greater_than = VersionService.greater_than_or_equal versions, lower_border, true
-      newest_version = VersionService.smaller_than(greater_than, upper_border)
-      if newest_version
-        newest_version
-      else
-        version_label
-      end
   end
 
   # turns caret semver selector into lower version

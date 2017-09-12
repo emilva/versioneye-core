@@ -8,6 +8,93 @@ describe PackageParser do
   #TODO: add test cases SEMVER comparition
   context "parse_requested_version" do
 
+    it "returns correct version for `^1.2.3`" do
+      product1.versions = []
+      product1.versions << Version.new(version: '1.2.3')
+      product1.versions << Version.new(version: '1.8.0')
+      product1.versions << Version.new(version: '2.0.0')
+      product1.versions << Version.new(version: '2.0.1')
+
+      parser.parse_requested_version('^1.2.3', dep1, product1)
+      expect(dep1).not_to be_nil
+      expect(dep1[:version_requested]).to eq('1.8.0')
+      expect(dep1[:version_label]).to eq('^1.2.3')
+      expect(dep1[:comperator]).to eq('^')
+    end
+
+    it "returns correct version for `^1.2`" do
+      product1.versions = []
+      product1.versions << Version.new(version: '1.2.3')
+      product1.versions << Version.new(version: '1.8.0')
+      product1.versions << Version.new(version: '2.0.0')
+      product1.versions << Version.new(version: '2.0.1')
+
+      parser.parse_requested_version('^1.2', dep1, product1)
+      expect(dep1).not_to be_nil
+      expect(dep1[:version_requested]).to eq('1.8.0')
+      expect(dep1[:version_label]).to eq('^1.2')
+      expect(dep1[:comperator]).to eq('^')
+    end
+
+    it "returns correct version for `^1`" do
+      product1.versions = []
+      product1.versions << Version.new(version: '1.0.3')
+      product1.versions << Version.new(version: '1.8.0')
+      product1.versions << Version.new(version: '2.0.0')
+      product1.versions << Version.new(version: '2.0.1')
+
+      parser.parse_requested_version('^1', dep1, product1)
+      expect(dep1).not_to be_nil
+      expect(dep1[:version_requested]).to eq('1.8.0')
+      expect(dep1[:version_label]).to eq('^1')
+      expect(dep1[:comperator]).to eq('^')
+    end
+
+    it "returns correct version for `^0.2.3`" do
+      product1.versions = []
+      product1.versions << Version.new(version: '0.2.3')
+      product1.versions << Version.new(version: '0.2.9')
+      product1.versions << Version.new(version: '0.3.0')
+      product1.versions << Version.new(version: '1.0.1')
+
+      parser.parse_requested_version('^0.2.3', dep1, product1)
+      expect(dep1).not_to be_nil
+      expect(dep1[:version_requested]).to eq('0.2.9')
+      expect(dep1[:version_label]).to eq('^0.2.3')
+      expect(dep1[:comperator]).to eq('^')
+    end
+
+    it "returns correct version for `^0.2`" do
+      product1.versions = []
+      product1.versions << Version.new(version: '0.2.3')
+      product1.versions << Version.new(version: '0.2.9')
+      product1.versions << Version.new(version: '0.3.0')
+      product1.versions << Version.new(version: '0.4.1')
+
+      parser.parse_requested_version('^0.2', dep1, product1)
+      expect(dep1).not_to be_nil
+      expect(dep1[:version_requested]).to eq('0.2.9')
+      expect(dep1[:version_label]).to eq('^0.2')
+      expect(dep1[:comperator]).to eq('^')
+    end
+
+    it "returns correct version for `^5.0.0`" do
+      # should here include lower border but exlude upper border of the range
+      product1.versions = []
+      product1.versions << Version.new(version: '0.2.3')
+      product1.versions << Version.new(version: '4.0.0')
+      product1.versions << Version.new(version: '5.0.0')
+      product1.versions << Version.new(version: '6.0.0')
+
+      parser.parse_requested_version('^5.0.0', dep1, product1)
+      expect(dep1).not_to be_nil
+      expect(dep1[:version_requested]).to eq('5.0.0')
+      expect(dep1[:version_label]).to eq('^5.0.0')
+      expect(dep1[:comperator]).to eq('^')
+    end
+
+
+
     it "parses correctly version labels with git urls" do
       git_version = 'git+https://example.com/foo/bar#115311855adb0789a0466714ed48a1499ffea97e'
       parser.parse_requested_version(git_version, dep1, product1)

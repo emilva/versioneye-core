@@ -63,6 +63,9 @@ describe PackageParser do
       underscore.versions << Version.new(version: '1.0.0')
       underscore.save
 
+      babel.versions << Version.new(version: '4.9.9')
+      babel.versions << Version.new(version: '5.0.0')
+      babel.versions << Version.new(version: '6.0.0')
       babel.save
 
       gulp.versions << Version.new(version: '3.0.0')
@@ -134,7 +137,7 @@ describe PackageParser do
       expect(cdep3[:version_requested]).to eq('5.0.0')
       expect(cdep3[:version_label]).to eq('^5.0.0')
       expect(cdep3[:comperator]).to eq('^')
-      expect(cdep3[:outdated]).to be_falsey
+      expect(cdep3[:outdated]).to be_truthy
 
     end
   end
