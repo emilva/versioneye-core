@@ -35,8 +35,8 @@ class Organisation < Versioneye::Model
   # Tracking Enterprise trial users
   field :trial_start, type: Time
   field :trial_end  , type: Time
-  
-  # Internal notes. Not visible on web page. 
+
+  # Internal notes. Not visible on web page.
   field :notes, type: String
 
   belongs_to :plan
