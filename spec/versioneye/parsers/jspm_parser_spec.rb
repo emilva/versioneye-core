@@ -82,7 +82,7 @@ describe PackageParser do
       expect(dep2[:prod_key]).to eq(plugin_babel[:prod_key])
       expect(dep2[:language]).to eq(plugin_babel[:language])
       expect(dep2[:scope]).to eq("jspm_#{Dependency::A_SCOPE_DEVELOPMENT}")
-      expect(dep2[:version_requested]).to eq('0.0.8')
+      expect(dep2[:version_requested]).to eq('0.0.5')
       expect(dep2[:version_label]).to eq('^0.0.5')
       expect(dep2[:comperator]).to eq('^')
       expect(dep2[:outdated]).to be_truthy
