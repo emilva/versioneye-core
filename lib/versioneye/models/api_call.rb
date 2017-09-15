@@ -19,7 +19,7 @@ class ApiCall < Versioneye::Model
   field :ip         , type: String
 
   # Expire after 60 days
-  index({ created_at: 1 }, { name: "created_at_ttl", background: true, expire_after_seconds: 5184000 })
+  # index({ created_at: 1 }, { name: "created_at_ttl", background: true, expire_after_seconds: 5184000 })
   index({ created_at: 1, ip: 1 }, { name: "created_at_id_key_index", background: true })
   index({ created_at: 1, api_key: 1 }, { name: "created_at_api_key_index", background: true })
   index({ api_key: 1 }, { name: "api_key_index", background: true })
