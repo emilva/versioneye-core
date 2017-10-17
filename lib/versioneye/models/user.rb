@@ -45,6 +45,7 @@ class User < Versioneye::Model
   field :stash_secret, type: String
 
   field :languages, type: String
+  field :uniq_langs, type: Array
 
   # Contains the <language::prod_key> downcased pairs for the packages which user is maintainer for.
   field :maintainer, type: Array

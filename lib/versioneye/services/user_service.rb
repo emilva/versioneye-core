@@ -101,16 +101,18 @@ class UserService < Versioneye::Service
 
   def self.update_languages
     User.all.each do |user|
+      languages = []
       products = user.products
-      if products.nil? || products.empty?
-        user.languages = nil
-      else
-        user.languages = user.products.distinct(:language)
+      if !products.nil? || !products.empty?
+        languages = products.distinct(:language)
       end
       user.orgas.each do |orga|
         langs = orga.projects.distinct(:language)
-        user.languages << langs if !langs.empty?
+        languages << langs if !langs.empty?
       end
+      languages = languages.flatten(1)
+      user.uniq_langs = languages.uniq
+      user.languages = languages.uniq.join(",")
       user.save
     end
   rescue => e
