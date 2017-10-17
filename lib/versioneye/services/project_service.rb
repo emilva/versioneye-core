@@ -364,6 +364,17 @@ class ProjectService < Versioneye::Service
   end
 
 
+  def self.destroy_orphan_deps
+    Projectdependency.each do |dep|
+      dep.delete if dep.project.nil?
+    end
+  rescue => e
+    log.error e.message
+    log.error e.backtrace.join("\n")
+    destroy_orphan_deps
+  end
+
+
   # Returns a map with
   #  - :key => "language_prod_key"
   #  - :value => "Array of project IDs where the prod_key is used"

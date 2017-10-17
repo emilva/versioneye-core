@@ -10,10 +10,10 @@ class Webhook < Versioneye::Model
   field :scm, type: String  # a name of SCM, value: A_TYPE_XYZ
   field :fullname, type: String # the repo fullname, format: owner_name/repo_name ~> Repo mode
 
-  #linked model ids
+  # linked model ids
   field :project_id, type: String #to which project this hook belongs
 
-  #foreign ids
+  # foreign ids
   field :app_id,  type: String # app_id, required to Github authorization
   field :hook_id, type: String # id from SCM
   field :service_name, type: String, default: 'web' # the service name of the webhook, aka name on Github docs
@@ -21,7 +21,7 @@ class Webhook < Versioneye::Model
   field :active, type: Boolean, default: true
   field :events, type: Array # array of string: ["push", "pull_request"]
 
-  #URLS
+  # URLs
   field :repo_url, type: String #optional url of REPO
   field :callback_url, type: String #our API url, which will be called by Github
   field :source_url, type: String #webhook's url on Github or other SCM
