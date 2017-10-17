@@ -107,6 +107,10 @@ class UserService < Versioneye::Service
       else
         user.languages = user.products.distinct(:language)
       end
+      user.orgas.each do |orga|
+        langs = orga.projects.distinct(:language)
+        user.languages << langs if !langs.empty?
+      end
       user.save
     end
   rescue => e
