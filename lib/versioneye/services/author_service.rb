@@ -109,6 +109,8 @@ class AuthorService < Versioneye::Service
     return true if dev && dev.dev_identifier.to_s.eql?('artiom_mocrenco')
     return true if dev && dev.dev_identifier.to_s.eql?('justin::brottes')
     return true if dev && dev.dev_identifier.to_s.eql?('justin.brottes')
+    return true if dev && dev.dev_identifier.to_s.eql?('James M. Joyce, Stokes, McNutt & Partners, LLC')
+    return true if dev && dev.dev_identifier.to_s.eql?('james_m::_joyce:::_stokes:::_mcnutt_&_partners:::_llc')
     return false
   end
 
