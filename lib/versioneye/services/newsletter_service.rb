@@ -21,6 +21,12 @@ class NewsletterService < Versioneye::Service
       count += self.send_email( user )
     end
     count
+  rescue => e
+    log.error e.message
+    log.error e.backtrace.join("\n")
+    p e.message
+    p e.backtrace.join("\n")
+    count
   end
 
 
@@ -35,6 +41,8 @@ class NewsletterService < Versioneye::Service
     user.save
     log.error e.message
     log.error e.backtrace.join("\n")
+    p e.message
+    p e.backtrace.join("\n")
     0
   end
 
