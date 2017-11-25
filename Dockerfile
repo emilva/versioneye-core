@@ -16,7 +16,7 @@ RUN apt-get update; \
     apt-get install -y build-essential; \
     apt-get install -y supervisor; \
     gem uninstall -i /usr/local/lib/ruby/gems/2.3.0 bundler -a -x; \
-    gem install bundler --version 1.15.3; \
+    gem install bundler --version 1.16.0; \
     rm -Rf /app; mkdir -p /app; mkdir -p /app/log; mkdir -p /app/pids
 
 ADD . /app/
