@@ -11,12 +11,25 @@ class SyncService < Versioneye::Service
   end
 
 
+  def self.sync_disabled?
+    env = Settings.instance.environment
+    disable_sync = GlobalSetting.get env, 'disable_sync'
+    return true if disable_sync.to_s.eql?('true')
+    return false
+  end
+
+
   def self.sync
     sync_projectdependencies Projectdependency.all
   end
 
 
   def self.sync_all_products skip_known_versions = true
+    if sync_disabled?
+      log.info "db sync is disabled!"
+      return nil
+    end
+
     log.info "START sync ALL products"
     ProductService.all_products_paged do |products|
       sync_products products, skip_known_versions
@@ -36,6 +49,11 @@ class SyncService < Versioneye::Service
 
 
   def self.sync_project project
+    if sync_disabled?
+      log.info "db sync is disabled!"
+      return nil
+    end
+
     sync_status = SyncStatus.find_or_create_by( :comp_type => 'Project', :comp_id => project.ids )
     sync_status.status = 'running'
     sync_status.save
@@ -95,6 +113,11 @@ class SyncService < Versioneye::Service
 
 
   def self.sync_projectdependency dependency, quicky = true
+    if sync_disabled?
+      log.info "db sync is disabled!"
+      return nil
+    end
+
     prod_key = dependency.possible_prod_key
     language = dependency.language
 
@@ -121,6 +144,11 @@ class SyncService < Versioneye::Service
 
 
   def self.sync_projectdependency_bower dependency, quicky = true
+    if sync_disabled?
+      log.info "db sync is disabled!"
+      return nil
+    end
+
     key      = dependency.name
     language = 'Bower'
 
@@ -147,6 +175,11 @@ class SyncService < Versioneye::Service
 
 
   def self.sync_product language, prod_key, skip_known_versions = true
+    if sync_disabled?
+      log.info "db sync is disabled!"
+      return nil
+    end
+
     sync_product_versions language, prod_key, skip_known_versions
     sync_security language, prod_key
   rescue => e
@@ -157,6 +190,11 @@ class SyncService < Versioneye::Service
 
 
   def self.sync_security language, prod_key
+    if sync_disabled?
+      log.info "db sync is disabled!"
+      return nil
+    end
+
     json = SecurityClient.index language, prod_key
     return nil if json.nil?
 
@@ -204,6 +242,11 @@ class SyncService < Versioneye::Service
 
 
   def self.sync_product_versions language, prod_key, skip_known_versions = true
+    if sync_disabled?
+      log.info "db sync is disabled!"
+      return nil
+    end
+
     json = ProductClient.versions language, prod_key
     return nil if json.nil?
 
@@ -238,6 +281,11 @@ class SyncService < Versioneye::Service
 
 
   def self.sync_version language, prod_key, version = nil
+    if sync_disabled?
+      log.info "db sync is disabled!"
+      return nil
+    end
+
     json = ProductClient.show language, prod_key, version
     return nil if json.nil?
 

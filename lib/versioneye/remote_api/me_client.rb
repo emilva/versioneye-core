@@ -7,7 +7,7 @@ class MeClient < CommonClient
   def self.show api_key
     return nil if api_key.to_s.empty?
 
-    url = "#{A_API}#{A_API_VERSION}#{A_API_ENDPOINT_PRODUCT}?api_key=#{api_key}"
+    url = "#{get_api_url}#{A_API_VERSION}#{A_API_ENDPOINT_PRODUCT}?api_key=#{api_key}"
     json = fetch_json url
   end
 

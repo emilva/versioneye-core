@@ -11,7 +11,7 @@ class ProductClient < CommonClient
     api_key = GlobalSetting.get env, 'api_key'
     encoded_language = encod_language language
     encoded_prod_key = encode prod_key
-    url = "#{A_API}#{A_API_VERSION}#{A_API_ENDPOINT_PRODUCT}/#{encoded_language}/#{encoded_prod_key}"
+    url = "#{get_api_url}#{A_API_VERSION}#{A_API_ENDPOINT_PRODUCT}/#{encoded_language}/#{encoded_prod_key}"
     if version
       url += "?prod_version=#{version}"
     end
@@ -32,7 +32,7 @@ class ProductClient < CommonClient
     api_key = GlobalSetting.get env, 'api_key'
     encoded_language = encod_language language
     encoded_prod_key = encode prod_key
-    url = "#{A_API}#{A_API_VERSION}#{A_API_ENDPOINT_PRODUCT}/#{encoded_language}/#{encoded_prod_key}/versions"
+    url = "#{get_api_url}#{A_API_VERSION}#{A_API_ENDPOINT_PRODUCT}/#{encoded_language}/#{encoded_prod_key}/versions"
     if !api_key.to_s.empty?
       url = "#{url}?api_key=#{api_key}"
     end
