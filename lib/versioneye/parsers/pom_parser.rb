@@ -55,7 +55,7 @@ class PomParser < CommonParser
         dependency.artifact_id = artifactId_text.downcase
       elsif child.name.casecmp('version') == 0
         version_text = get_variable_value_from_pom(properties, child.text.strip)
-        dependency.version_requested = version_text
+        dependency.version_requested = version_text.to_s.gsub(/-redhat-.*/i, "")
       elsif child.name.casecmp('scope') == 0
         scope_text = get_variable_value_from_pom(properties, child.text.strip)
         dependency.scope = scope_text

@@ -37,6 +37,7 @@ class PomJsonParser < PomParser
     uniq_deps = []
     pom_json['dependencies'].each do |json_dep|
       version     = json_dep['version']
+      version     = version.to_s.gsub(/-redhat-.*/i, "")
       name        = json_dep['name']
       scope       = json_dep['scope']
       scope       = 'compile' if scope.to_s.empty?
