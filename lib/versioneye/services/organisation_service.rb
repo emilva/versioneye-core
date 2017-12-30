@@ -37,6 +37,28 @@ class OrganisationService < Versioneye::Service
   end
 
 
+  def self.update_plan organisation, plan_name_id
+    stripe_token  = organisation.stripe_token
+    customer_id   = organisation.stripe_customer_id
+    customer      = nil
+    if customer_id && stripe_token
+      customer = StripeService.fetch_customer customer_id
+    end
+    if customer
+      p " - update_plan for #{organisation.name} - #{plan_name_id} - stripe customer exist already, just update plan."
+      customer.update_subscription( :plan => plan_name_id )
+      organisation.plan = Plan.by_name_id plan_name_id
+      saved = organisation.save
+      p " - orga updated with new plan: #{saved}"
+    else 
+      p " - customer for #{organisation.name} does not exist"
+    end
+  rescue => e
+    logger.error e.message
+    logger.error e.backtrace.join("\n")
+  end
+
+
   def self.inventory_diff_async orga_name, filter1, filter2
     orga = Organisation.where(:name => orga_name).first
     if orga.nil?
