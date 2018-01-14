@@ -110,7 +110,21 @@ class ProjectService < Versioneye::Service
 
 
   def self.find id
-    Project.find_by_id( id )
+    project = Project.find_by_id( id )
+    replace_rh_versions project
+    project
+  rescue => e
+    log.error e.message
+    nil
+  end
+
+
+  def self.replace_rh_versions project
+    project.all_dependencies.each do |dep|
+      dep.version_label.to_s.gsub!(/-redhat-.*/i, "")
+      dep.version_requested.to_s.gsub!(/-redhat-.*/i, "")
+      dep.save
+    end
   rescue => e
     log.error e.message
     nil
