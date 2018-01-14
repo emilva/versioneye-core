@@ -23,7 +23,10 @@ class TeamNotificationService  < Versioneye::Service
 
   def self.process_orga orga
     update_projects orga
-    # process_teams orga
+    env = Settings.instance.environment
+    if env.to_s.eql?("enterprise")
+      process_teams orga
+    end
   end
 
 
