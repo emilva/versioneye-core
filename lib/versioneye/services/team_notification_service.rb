@@ -23,7 +23,7 @@ class TeamNotificationService  < Versioneye::Service
 
   def self.process_orga orga
     update_projects orga
-    process_teams orga
+    # process_teams orga
   end
 
 
