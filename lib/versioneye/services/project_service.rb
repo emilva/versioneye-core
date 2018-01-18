@@ -121,8 +121,8 @@ class ProjectService < Versioneye::Service
 
   def self.replace_rh_versions project
     project.all_dependencies.each do |dep|
-      dep.version_label.to_s.gsub!(/-redhat-.*/i, "")
-      dep.version_requested.to_s.gsub!(/-redhat-.*/i, "")
+      dep.version_label = dep.version_label.to_s.gsub(/-redhat-.*/i, "")
+      dep.version_requested = dep.version_requested.to_s.gsub(/-redhat-.*/i, "")
       dep.save
     end
   rescue => e
