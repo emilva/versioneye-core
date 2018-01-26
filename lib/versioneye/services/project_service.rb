@@ -123,6 +123,7 @@ class ProjectService < Versioneye::Service
     project.all_dependencies.each do |dep|
       dep.version_label = dep.version_label.to_s.gsub(/-redhat-.*/i, "")
       dep.version_requested = dep.version_requested.to_s.gsub(/-redhat-.*/i, "")
+      dep.version_current = dep.version_current.to_s.gsub(/-redhat-.*/i, "")
       dep.save
     end
   rescue => e
