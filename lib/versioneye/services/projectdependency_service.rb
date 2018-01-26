@@ -53,8 +53,8 @@ class ProjectdependencyService < Versioneye::Service
       project_dep.group_id        = prod_dep.group_id
       project_dep.artifact_id     = prod_dep.artifact_id
       project_dep.scope           = prod_dep.scope
-      project_dep.version_current = prod_dep.current_version
-      project_dep.version_label   = prod_dep.parsed_version
+      project_dep.version_current = prod_dep.current_version.to_s.gsub(/-redhat-.*/i, "")
+      project_dep.version_label   = prod_dep.parsed_version.to_s.gsub(/-redhat-.*/i, "")
       project_dep.transitive      = true
       project_dep.parent_prod_key = dep.prod_key
       project_dep.parent_version  = dep.version_requested
@@ -357,7 +357,7 @@ class ProjectdependencyService < Versioneye::Service
     end
 
     if !projectdependency.ext_link.to_s.empty?
-      projectdependency.version_current = projectdependency.version_requested
+      projectdependency.version_current = projectdependency.version_requested.to_s.gsub(/-redhat-.*/i, "")
       return false
     end
 
@@ -372,7 +372,7 @@ class ProjectdependencyService < Versioneye::Service
 
     version_current = projectdependency.version_current
     if version_current.to_s.empty? || !version_current.eql?( newest_version )
-      projectdependency.version_current = newest_version
+      projectdependency.version_current = newest_version.to_s.gsub(/-redhat-.*/i, "")
       projectdependency.release = VersionTagRecognizer.release? projectdependency.version_current
       projectdependency.muted = false
     end

@@ -167,10 +167,11 @@ class NewestService < Versioneye::Service
 
   def self.update_current_version_maven_pd product
     multi_log "update_current_version_maven for #{product.language}:#{product.prod_key}"
+    newest_version = product.version.to_s.gsub(/-redhat-.*/i, "")
     Projectdependency.where(
       :group_id => product.group_id,
       :artifact_id => product.artifact_id
-      ).update_all(:version_current => product.version)
+      ).update_all(:version_current => newest_version)
   end
 
   def self.update_outdated_maven_pd product
@@ -185,10 +186,11 @@ class NewestService < Versioneye::Service
   end
 
   def self.update_current_for_pd product
+    newest_version = product.version.to_s.gsub(/-redhat-.*/i, "")
     Projectdependency.where(
       :language => product.language,
       :prod_key => product.prod_key
-      ).update_all(:version_current => product.version)
+      ).update_all(:version_current => newest_version)
   end
 
   def self.update_outdated_pd product
