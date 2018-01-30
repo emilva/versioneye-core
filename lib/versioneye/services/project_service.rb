@@ -560,6 +560,9 @@ class ProjectService < Versioneye::Service
     Badge.where( :key => "#{project_id}__flat" ).delete
     Badge.where( :key => "#{project_id}__flat-square" ).delete
     Badge.where( :key => "#{project_id}__plastic" ).delete
+  rescue => e
+    log.error e.message
+    log.error e.backtrace.join("\n")
   end
 
 
