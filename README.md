@@ -1,4 +1,5 @@
-[![CircleCI](https://circleci.com/gh/versioneye/versioneye-core.svg?style=svg)](https://circleci.com/gh/versioneye/versioneye-core) 
+[![CircleCI](https://circleci.com/gh/versioneye/versioneye-core.svg?style=svg)](https://circleci.com/gh/versioneye/versioneye-core) [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Femilva%2Fversioneye-core.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Femilva%2Fversioneye-core?ref=badge_shield)
+
 
 # versioneye-core
 
@@ -130,3 +131,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Femilva%2Fversioneye-core.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Femilva%2Fversioneye-core?ref=badge_large)
